@@ -22,6 +22,14 @@
         android:gravity="top|center_horizontal"
         />
 
+    <TextView
+        android:id="@+id/textCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="000" 
+        android:layout_marginRight="10dp" />
+
     <Button
         android:id="@+id/buttonUpdate"
         android:layout_width="fill_parent"

@@ -4,4 +4,12 @@
 	<string name="titleStatus">Status Update</string>
 	<string name="buttonUpdate">Update</string>
 	<string name="hintText">Write Status Updates Here</string>
+	<string name="titleUsername">Username</string>
+	<string name="titlePassword">Password</string>
+	<string name="titleApiRoot">API Root</string>
+	<string name="titlePrefs">Preferences</string>
+	
+	<string name="summaryUsername">Please enter your username</string> 
+	<string name="summaryPassword">Please enter your password</string> 
+	<string name="summaryApiRoot">URL of Root API for your service</string>
 </resources>
