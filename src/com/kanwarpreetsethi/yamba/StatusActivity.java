@@ -23,20 +23,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class StatusActivity extends Activity implements OnClickListener, TextWatcher, OnSharedPreferenceChangeListener{
+public class StatusActivity extends Activity implements OnClickListener, TextWatcher {
 	
-	private static final String TAG = "StatusActivity";
+	
 	EditText editText;
 	Button updateButton;
-	Twitter twitter;
 	TextView textCount;
-	SharedPreferences prefs;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.status);
+        this.setContentView(R.layout.status);
         
         editText = (EditText) findViewById(R.id.statusText);
         updateButton = (Button) findViewById(R.id.buttonUpdate);
@@ -46,25 +44,8 @@ public class StatusActivity extends Activity implements OnClickListener, TextWat
         textCount.setText(Integer.toString(140));
         textCount.setTextColor(Color.GREEN);
         
-        editText.addTextChangedListener(this);
-        
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.registerOnSharedPreferenceChangeListener(this);
+        editText.addTextChangedListener(this);  
 
-    }
-
-    private Twitter getTwitter() {
-    	if (twitter == null) {
-    		String username, password, apiRoot;
-    		username = prefs.getString("username", "");
-    		password = prefs.getString("password", "");
-    		apiRoot = prefs.getString("apiRoot", "");
-    		
-    		twitter = new Twitter(username, password);
-    		twitter.setAPIRootUrl(apiRoot);
-    	}
-    	
-    	return twitter;
     }
     
     class PostToTwitter extends AsyncTask<String, Integer, String> {
@@ -73,10 +54,10 @@ public class StatusActivity extends Activity implements OnClickListener, TextWat
 		protected String doInBackground(String... statuses) {
 			
 			try {
-				Twitter.Status status = getTwitter().updateStatus(statuses[0]);
+				YambaApplication yamba = (YambaApplication) getApplication();
+				Twitter.Status status = yamba.getTwitter().updateStatus(statuses[0]);
 				return status.text;
 			}	catch (TwitterException e) {
-				Log.e(TAG, e.toString());
 				e.printStackTrace();
 				return "Failed To Post";
 			}
@@ -99,7 +80,6 @@ public class StatusActivity extends Activity implements OnClickListener, TextWat
 	public void onClick(View view) {
 		String status = editText.getText().toString();
 		new PostToTwitter().execute(status);
-		Log.d(TAG, "button clicked");
 	}
 
 	@Override
@@ -113,8 +93,14 @@ public class StatusActivity extends Activity implements OnClickListener, TextWat
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.itemPrefs:
-			startActivity(new Intent(this, PrefsActivity.class));
-		break;
+			this.startActivity(new Intent(this, PrefsActivity.class));
+			break;
+		case R.id.itemServiceStart:
+			this.startService(new Intent(this, UpdaterService.class));
+			break;
+		case R.id.itemServiceStop:
+			this.stopService(new Intent(this, UpdaterService.class));
+			break;
 		}
 		
 		return true;
@@ -142,13 +128,5 @@ public class StatusActivity extends Activity implements OnClickListener, TextWat
 	public void onTextChanged(CharSequence text, int start, int before, int count) {
 		
 	}
-
-	@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-			String key) {
-		twitter = null;
-		
-	}
-
 	
 }
