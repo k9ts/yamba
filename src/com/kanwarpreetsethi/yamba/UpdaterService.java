@@ -1,12 +1,8 @@
 package com.kanwarpreetsethi.yamba;
 
-import java.util.List;
-
-import winterwell.jtwitter.Twitter;
-import winterwell.jtwitter.TwitterException;
-
 import android.app.Service;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -17,6 +13,7 @@ public class UpdaterService extends Service {
 	private boolean runflag = false;
 	private Updater updater;
 	private YambaApplication yamba;
+	SQLiteDatabase db;
 	
 	@Override
 	public void onCreate() {
@@ -52,7 +49,6 @@ public class UpdaterService extends Service {
 	}
 	
 	private class Updater extends Thread {
-		List<Twitter.Status> timeline;
 		
 		public Updater() {
 			super("UpdaterService-Updater");
@@ -65,16 +61,15 @@ public class UpdaterService extends Service {
 			while (updaterService.runflag) {
 				try {
 					Log.d(TAG, "Updater running");
-					try {
-						timeline = yamba.getTwitter().getFriendsTimeline();
-					} catch (TwitterException t) {
-						System.err.println(t);
-					}
-					for (Twitter.Status status : timeline) {
-						Log.d(TAG, String.format("%s, %s", status.user.name, status.text));
+					
+					int newUpdates = updaterService.yamba.fetchStatusUpdates(); 
+					if (newUpdates > 0) { 
+					Log.d(TAG, "We have a new status");
 					}
 					Log.d(TAG, "Updater ran");
 					Thread.sleep(DELAY);
+					
+					
 				} catch (InterruptedException e) {
 					updaterService.runflag = false;
 					System.err.println(e);

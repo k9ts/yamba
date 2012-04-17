@@ -10,6 +10,7 @@
 	<string name="titlePrefs">Preferences</string>
 	<string name="titleServiceStart">Start Updater Service</string>
 	<string name="titleServiceStop">Stop Updater Service</string>
+	<string name="titleTimeline">Status Updates</string>
 	
 	<string name="summaryUsername">Please enter your username</string> 
 	<string name="summaryPassword">Please enter your password</string> 
